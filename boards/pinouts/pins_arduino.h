@@ -10,6 +10,8 @@
 #include "m5stack-cardputer.h"
 #elif CYD_2432S028
 #include "CYD-2432S028.h"
+#elif CYD_2432S022
+#include "CYD-2432S022.h"
 #elif ARDUINO_M5STACK_CORE
 #include "m5stack-core.h"
 #elif ARDUINO_M5STACK_CORES3

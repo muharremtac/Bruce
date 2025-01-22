@@ -67,6 +67,11 @@ jobs:
               env: "CYD-2432S028",
               partitions: { bootloader_addr: "0x1000" },
             }
+                      - {
+              name: "CYD-2432S022",
+              env: "CYD-2432S022",
+              partitions: { bootloader_addr: "0x1000" },
+            }
           - {
               name: "CYD-2USB",
               env: "CYD-2USB",
