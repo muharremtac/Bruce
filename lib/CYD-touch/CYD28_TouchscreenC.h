@@ -7,10 +7,10 @@
 
 // These definitions come from https://github.com/rzeldent/platformio-espressif32-sunton board definitions
 #if defined (TOUCH_CST816S_I2C)
-    #define CYD28_TouchC_SDA CST816S_I2C_CONFIG_SDA_IO_NUM
-    #define CYD28_TouchC_SCL CST816S_I2C_CONFIG_SCL_IO_NUM
-    #define CYD28_TouchC_INT CST816S_TOUCH_CONFIG_INT_GPIO_NUM
-    #define CYD28_TouchC_RST CST816S_TOUCH_CONFIG_RST_GPIO_NUM
+    #define CYD28_TouchC_SDA 21
+    #define CYD28_TouchC_SCL 22
+    #define CYD28_TouchC_INT GPIO_NUM_NC
+    #define CYD28_TouchC_RST GPIO_NUM_NC
     #define CYD28_I2C_ADDR 0x15
 //  #elif defined(TOUCH_GT911_I2C) // Not implemented
 //      #define CYD28_TouchC_SDA GT911_I2C_CONFIG_SDA_IO_NUM
