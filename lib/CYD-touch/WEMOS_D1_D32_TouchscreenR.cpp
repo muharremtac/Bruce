@@ -26,24 +26,24 @@
  * 
  */
 
-#include "CYD28_TouchscreenR.h"
+#include "WEMOS_D1_R32_TouchscreenR.h"
 
 #define ISR_PREFIX IRAM_ATTR
 #define MSEC_THRESHOLD 3
 
-static CYD28_TouchR *isrPinptr;
+static WEMOS_D1_R32_TouchR *isrPinptr;
 void isrPin(void);
 // ------------------------------------------------------------
-bool CYD28_TouchR::begin()
+bool WEMOS_D1_R32_TouchR::begin()
 {
-  pinMode(CYD28_TouchR_MOSI, OUTPUT);
-  pinMode(CYD28_TouchR_MISO, INPUT);
-  pinMode(CYD28_TouchR_CLK, OUTPUT);
-  pinMode(CYD28_TouchR_CS, OUTPUT);
-  digitalWrite(CYD28_TouchR_CLK, LOW);
-  digitalWrite(CYD28_TouchR_CS, HIGH);
-  pinMode(CYD28_TouchR_IRQ, INPUT);
-  attachInterrupt(digitalPinToInterrupt(CYD28_TouchR_IRQ), isrPin, FALLING);
+  pinMode(WEMOS_D1_R32_TouchR_MOSI, OUTPUT);
+  pinMode(WEMOS_D1_R32_TouchR_MISO, INPUT);
+  pinMode(WEMOS_D1_R32_TouchR_CLK, OUTPUT);
+  pinMode(WEMOS_D1_R32_TouchR_CS, OUTPUT);
+  digitalWrite(WEMOS_D1_R32_TouchR_CLK, LOW);
+  digitalWrite(WEMOS_D1_R32_TouchR_CS, HIGH);
+  pinMode(WEMOS_D1_R32_TouchR_IRQ, INPUT);
+  attachInterrupt(digitalPinToInterrupt(WEMOS_D1_R32_TouchR_IRQ), isrPin, FALLING);
   isrPinptr = this;
   return true;
 }
@@ -51,11 +51,11 @@ bool CYD28_TouchR::begin()
 ISR_PREFIX
 void isrPin(void)
 {
-  CYD28_TouchR *o = isrPinptr;
+  WEMOS_D1_R32_TouchR *o = isrPinptr;
   o->isrWake = true;
 }
 // ------------------------------------------------------------
-uint8_t CYD28_TouchR::transfer(uint8_t val)
+uint8_t WEMOS_D1_R32_TouchR::transfer(uint8_t val)
 {
   uint8_t out = 0;
   uint8_t del = _delay >> 1;
@@ -66,22 +66,22 @@ uint8_t CYD28_TouchR::transfer(uint8_t val)
   while (bit)
   {
     bit--;
-    digitalWrite(CYD28_TouchR_MOSI, ((val & (1 << bit)) ? HIGH : LOW)); // Write bit
+    digitalWrite(WEMOS_D1_R32_TouchR_MOSI, ((val & (1 << bit)) ? HIGH : LOW)); // Write bit
     wait(del);
     sck ^= 1u;
-    digitalWrite(CYD28_TouchR_CLK, sck);
+    digitalWrite(WEMOS_D1_R32_TouchR_CLK, sck);
     /* ... Read bit */
-    bval = digitalRead(CYD28_TouchR_MISO);
+    bval = digitalRead(WEMOS_D1_R32_TouchR_MISO);
     out <<= 1;
     out |= bval;
     wait(del);
     sck ^= 1u;
-    digitalWrite(CYD28_TouchR_CLK, sck);
+    digitalWrite(WEMOS_D1_R32_TouchR_CLK, sck);
   }
   return out;
 }
 // ------------------------------------------------------------
-uint16_t CYD28_TouchR::transfer16(uint16_t data)
+uint16_t WEMOS_D1_R32_TouchR::transfer16(uint16_t data)
 {
   union
   {
@@ -99,7 +99,7 @@ uint16_t CYD28_TouchR::transfer16(uint16_t data)
   return out.val;
 }
 // ------------------------------------------------------------
-void CYD28_TouchR::wait(uint_fast8_t del)
+void WEMOS_D1_R32_TouchR::wait(uint_fast8_t del)
 {
   for (uint_fast8_t i = 0; i < del; i++)
   {
@@ -107,27 +107,27 @@ void CYD28_TouchR::wait(uint_fast8_t del)
   }
 }
 // ------------------------------------------------------------
-CYD28_TS_Point CYD28_TouchR::getPointScaled()
+WEMOS_D1_R32_TS_Point WEMOS_D1_R32_TouchR::getPointScaled()
 {
   update();
   int16_t x = xraw, y = yraw;
   convertRawXY(&x, &y);
-  return CYD28_TS_Point(x, y, zraw);
+  return WEMOS_D1_R32_TS_Point(x, y, zraw);
 }
 // ------------------------------------------------------------
-CYD28_TS_Point CYD28_TouchR::getPointRaw()
+WEMOS_D1_R32_TS_Point WEMOS_D1_R32_TouchR::getPointRaw()
 {
   update();
-  return CYD28_TS_Point(xraw, yraw, zraw);
+  return WEMOS_D1_R32_TS_Point(xraw, yraw, zraw);
 }
 // ------------------------------------------------------------
-bool CYD28_TouchR::touched()
+bool WEMOS_D1_R32_TouchR::touched()
 {
   update();
   return ((zraw >= threshold) && isrWake);
 }
 // ------------------------------------------------------------
-void CYD28_TouchR::readData(uint16_t *x, uint16_t *y, uint8_t *z)
+void WEMOS_D1_R32_TouchR::readData(uint16_t *x, uint16_t *y, uint8_t *z)
 {
   update();
   *x = xraw;
@@ -153,7 +153,7 @@ static int16_t besttwoavg(int16_t x, int16_t y, int16_t z)
   return (reta);
 }
 // ------------------------------------------------------------
-void CYD28_TouchR::update()
+void WEMOS_D1_R32_TouchR::update()
 {
   int16_t data[6];
   int z;
@@ -163,7 +163,7 @@ void CYD28_TouchR::update()
   if (now - msraw < MSEC_THRESHOLD)
     return;
 
-  digitalWrite(CYD28_TouchR_CS, LOW);
+  digitalWrite(WEMOS_D1_R32_TouchR_CS, LOW);
   transfer(0xB1 /* Z1 */);
   int16_t z1 = transfer16(0xC1 /* Z2 */) >> 3;
   z = z1 + 4095;
@@ -180,13 +180,13 @@ void CYD28_TouchR::update()
   else  data[0] = data[1] = data[2] = data[3] = 0;
   data[4] = transfer16(0xD0 /* Y */) >> 3;
   data[5] = transfer16(0) >> 3;
-  digitalWrite(CYD28_TouchR_CS, HIGH);
+  digitalWrite(WEMOS_D1_R32_TouchR_CS, HIGH);
 
   if (z < 0) z = 0;
   if (z < threshold)
   {
     zraw = 0;
-    if (z < CYD28_TouchR_Z_THRES_INT)
+    if (z < WEMOS_D1_R32_TouchR_Z_THRES_INT)
     { 
       isrWake = false;
     }
@@ -206,28 +206,28 @@ void CYD28_TouchR::update()
   }
 }
 // ------------------------------------------------------------
-void CYD28_TouchR::convertRawXY(int16_t *x, int16_t *y)
+void WEMOS_D1_R32_TouchR::convertRawXY(int16_t *x, int16_t *y)
 {
   int16_t x_tmp = *x, y_tmp = *y, xx, yy;
   switch (rotation)
   {
   case 0: // PORT0
-    xx = ((y_tmp - CYD28_TouchR_CAL_YMIN) * sizeY_px) / (CYD28_TouchR_CAL_YMAX - CYD28_TouchR_CAL_YMIN);
-    yy = ((x_tmp - CYD28_TouchR_CAL_XMIN) * sizeX_px) / (CYD28_TouchR_CAL_XMAX - CYD28_TouchR_CAL_XMIN);
+    xx = ((y_tmp - WEMOS_D1_R32_TouchR_CAL_YMIN) * sizeY_px) / (WEMOS_D1_R32_TouchR_CAL_YMAX - WEMOS_D1_R32_TouchR_CAL_YMIN);
+    yy = ((x_tmp - WEMOS_D1_R32_TouchR_CAL_XMIN) * sizeX_px) / (WEMOS_D1_R32_TouchR_CAL_XMAX - WEMOS_D1_R32_TouchR_CAL_XMIN);
     xx = sizeY_px - xx;
     break;
   case 1: // LANDSC0
-    xx = ((x_tmp - CYD28_TouchR_CAL_XMIN) * sizeX_px) / (CYD28_TouchR_CAL_XMAX - CYD28_TouchR_CAL_XMIN);
-    yy = ((y_tmp - CYD28_TouchR_CAL_YMIN) * sizeY_px) / (CYD28_TouchR_CAL_YMAX - CYD28_TouchR_CAL_YMIN);
+    xx = ((x_tmp - WEMOS_D1_R32_TouchR_CAL_XMIN) * sizeX_px) / (WEMOS_D1_R32_TouchR_CAL_XMAX - WEMOS_D1_R32_TouchR_CAL_XMIN);
+    yy = ((y_tmp - WEMOS_D1_R32_TouchR_CAL_YMIN) * sizeY_px) / (WEMOS_D1_R32_TouchR_CAL_YMAX - WEMOS_D1_R32_TouchR_CAL_YMIN);
     break;      
   case 2: // PORT1
-    xx = ((y_tmp - CYD28_TouchR_CAL_YMIN) * sizeY_px) / (CYD28_TouchR_CAL_YMAX - CYD28_TouchR_CAL_YMIN);
-    yy = ((x_tmp - CYD28_TouchR_CAL_XMIN) * sizeX_px) / (CYD28_TouchR_CAL_XMAX - CYD28_TouchR_CAL_XMIN);
+    xx = ((y_tmp - WEMOS_D1_R32_TouchR_CAL_YMIN) * sizeY_px) / (WEMOS_D1_R32_TouchR_CAL_YMAX - WEMOS_D1_R32_TouchR_CAL_YMIN);
+    yy = ((x_tmp - WEMOS_D1_R32_TouchR_CAL_XMIN) * sizeX_px) / (WEMOS_D1_R32_TouchR_CAL_XMAX - WEMOS_D1_R32_TouchR_CAL_XMIN);
     yy = sizeX_px - yy;
     break;
   default: // 3 LANDSC1
-    xx = ((x_tmp - CYD28_TouchR_CAL_XMIN) * sizeX_px) / (CYD28_TouchR_CAL_XMAX - CYD28_TouchR_CAL_XMIN);
-    yy = ((y_tmp - CYD28_TouchR_CAL_YMIN) * sizeY_px) / (CYD28_TouchR_CAL_YMAX - CYD28_TouchR_CAL_YMIN);
+    xx = ((x_tmp - WEMOS_D1_R32_TouchR_CAL_XMIN) * sizeX_px) / (WEMOS_D1_R32_TouchR_CAL_XMAX - WEMOS_D1_R32_TouchR_CAL_XMIN);
+    yy = ((y_tmp - WEMOS_D1_R32_TouchR_CAL_YMIN) * sizeY_px) / (WEMOS_D1_R32_TouchR_CAL_YMAX - WEMOS_D1_R32_TouchR_CAL_YMIN);
     xx = sizeX_px - xx;
     yy = sizeY_px - yy;
     break;

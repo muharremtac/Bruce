@@ -88,6 +88,13 @@ jobs:
               partitions: { bootloader_addr: "0x1000" },
             }
           - {
+            vendor: "WEMOS",
+            name: "wemos-d1-r32",
+            env: "wemos-d1-r32",
+            family: "ESP32",
+            partitions: { bootloader_addr: "0x1000" },
+          }
+          - {
               vendor: "CYD",
               name: "CYD-2432S022",
               env: "CYD-2432S022",

@@ -6,7 +6,7 @@
     "core": "esp32",
     "extra_flags": [
       "-DARDUINO_ESP32_DEV",
-      "-DCYD_2432S022",
+      "-DCYD_2432S028",
       "-DARDUINO_RUNNING_CORE=1",
       "-DARDUINO_EVENT_RUNNING_CORE=1"
     ],
@@ -37,6 +37,6 @@
     "require_upload_port": true,
     "speed": 460800
   },
-  "url": "https://www.aliexpress.com/item/1005006284154750.html",
-  "vendor": "Sunton"
+  "url": "https://en.wikipedia.org/wiki/ESP32",
+  "vendor": "SJI Co., Ltd"
 }
